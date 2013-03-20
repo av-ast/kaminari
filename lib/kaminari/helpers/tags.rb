@@ -25,7 +25,11 @@ module Kaminari
       end
 
       def page_url_for(page)
-        @template.url_for @params.merge(@param_name => (page <= 1 ? nil : page))
+        #@template.url_for @params.merge(@param_name => (page <= 1 ? nil : page))
+        current_page_params_as_query_string = @param_name.to_s + '=' + (page <= 1 ? nil : page).to_s
+        current_page_params_as_hash = Rack::Utils.parse_nested_query(current_page_params_as_query_string)
+        merged_params = current_page_params_as_hash.deep_merge(@params)
+        @template.url_for merged_params.deep_symbolize_keys
       end
     end
 
